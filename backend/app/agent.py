@@ -19,8 +19,7 @@ def ask(q: str, mem: MemoryService) -> dict:
     if not ctx["similar"]:
         return {"intent": intent, "answer": NONE, "facts": [], "inference": [], "evidence": []}
     top = ctx["similar"][0]
-    records = {r["id"]: r for r in ctx["similar"] + ctx["connected"]}
-    chain = sorted(records.values(), key=lambda r: r["date"])
+    chain = sorted([top] + mem.search_related(top["id"]), key=lambda r: r["date"])
     if intent == "CHANGE_HISTORY":
         chain = [r for r in chain if r["service"] == top["service"] and r["type"] in ("pull_request", "deployment", "incident")]
     facts = [f'{r["date"]} {r["id"]}: {r["title"]} — {r["text"]}' for r in chain]

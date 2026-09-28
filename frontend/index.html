@@ -47,17 +47,6 @@ const ask=q=>api("/chat",{question:q}),review=(diff,service)=>api("/code-review"
 /* ---------- UI ---------- */
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const PAGES=["Dashboard","Ask EngBrain","Timeline","Incidents","Code Review","Settings"];let page="Dashboard";
-const SAMPLE_QUESTIONS=[
- "Why does the retry mechanism exist in payment-service?",
- "Have we seen duplicate payment problems before?",
- "What safeguards stopped duplicate charges from repeated payment callbacks?",
- "Why were auth tokens rejected when service-node clocks drifted?",
- "How was the notification queue backlog after consumer crashes resolved?",
- "Why was payment-service v3.1.0 rolled back?",
- "What happened to the connection pool after deployment v2.4.1?",
- "Why did the team choose retries over a circuit breaker?",
- "What happened the last time we changed the database connection handling in payment-service?"
-];
 const chip=r=>`<span class="chip" data-id="${esc(r.id)}">${esc(r.id)}</span>`;
 function nav(){$("#nav").innerHTML=PAGES.map(p=>`<button class="${p===page?"on":""}" data-p="${p}">${p}</button>`).join("")}
 function empty(){return`<div class="card">No memory loaded yet. <button class="btn" id="demo">Load Demo Engineering History</button></div>`}
@@ -69,7 +58,7 @@ const views={
   <div class="card"><b>Recent activity</b><br>${Memory.timeline().slice(-5).reverse().map(chip).join("")}</div><div id="out"></div>`:empty()}`},
  "Ask EngBrain"(){return`<h1>Ask EngBrain</h1><div class="sub">Answers cite evidence; facts and inference are kept separate.</div>${Memory.store.length?"":empty()}
   <input id="q" placeholder="Why does the retry mechanism exist in payment-service?"><button class="btn" id="go">Ask</button>
-  <div class="hint" style="margin-top:8px">Try: ${SAMPLE_QUESTIONS.map(q=>`<span class="chip s">${esc(q)}</span>`).join("")}</div><div id="out" style="margin-top:14px"></div>`},
+  <div class="hint" style="margin-top:8px">Try: <span class="chip s">Why does the retry mechanism exist in payment-service?</span><span class="chip s">Have we seen duplicate payment problems before?</span><span class="chip s">What happened the last time we changed the database connection handling in payment-service?</span></div><div id="out" style="margin-top:14px"></div>`},
  Timeline(){return`<h1>Engineering Timeline</h1><div class="sub">Click an event for details.</div>${Memory.store.length?`<select id="svc"><option value="">All services</option>${[...new Set(Memory.store.map(r=>r.service))].map(s=>`<option ${s==="payment-service"?"selected":""}>${s}</option>`).join("")}</select><div class="tl" id="tl" style="margin-top:14px"></div><div id="out"></div>`:empty()}`},
  Incidents(){return`<h1>Incidents</h1><div class="sub">Click to trace related PRs, deployments and decisions.</div>${Memory.store.length?Memory.store.filter(r=>r.type==="incident").map(r=>`<div class="card"><span class="tag inc">${r.id}</span><span class="tag">${r.service}</span><span class="tag">${r.date}</span> <b>${esc(r.title)}</b><p>${esc(r.text)}</p>${Memory.related(r.id).map(chip).join("")}</div>`).join("")+`<div id="out"></div>`:empty()}`},
 

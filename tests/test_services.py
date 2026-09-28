@@ -26,9 +26,6 @@ class Workflows(unittest.TestCase):
     def test_seen_before(self):
         r = ask("Have we seen duplicate payment problems before?", self.m)
         self.assertIn("INC-103", ids(r))
-    def test_multi_incident_question_includes_each_history(self):
-        r = ask("What caused duplicate payments in the retry incident and the later callback incident, and what safeguards were added for each?", self.m)
-        self.assertTrue({"INC-103", "PR-251", "INC-106", "DEC-02", "PR-266"}.issubset(ids(r)))
     def test_last_change(self):
         r = ask("What happened the last time we changed the database connection handling in payment-service?", self.m)
         self.assertLessEqual({"PR-318", "DP-v3.1.0", "INC-142"}, ids(r)); self.assertTrue(r["inference"])

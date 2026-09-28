@@ -116,7 +116,7 @@ class MemoryService:
     def get_context(self, query: str, service: str | None = None) -> dict:
         hits = self.recall(query, service)
         rel = {}
-        for h in hits:
+        for h in hits[:2]:
             for r in self.search_related(h["id"]):
                 rel[r["id"]] = r
         hit_ids = {h["id"] for h in hits}
